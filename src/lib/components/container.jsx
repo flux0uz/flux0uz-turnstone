@@ -1,4 +1,10 @@
-import React, { useState, useRef, useContext, useImperativeHandle, useEffect } from 'react'
+import React, {
+  useState,
+  useRef,
+  useContext,
+  useImperativeHandle,
+  useEffect,
+} from 'react'
 import { StateContext } from '../context/state'
 import Listbox from './listbox'
 import Errorbox from './errorbox'
@@ -12,7 +18,7 @@ import {
   useItemsError,
   useQueryChange,
   useHighlight,
-  useSelected
+  useSelected,
 } from './hooks/containerEffects'
 import {
   setQuery,
@@ -20,7 +26,7 @@ import {
   highlightPrev,
   highlightNext,
   setSelected,
-  clear
+  clear,
 } from '../actions/actions'
 
 const Container = React.forwardRef((props, ref) => {
@@ -56,7 +62,7 @@ const Container = React.forwardRef((props, ref) => {
     text,
     typeahead,
     Cancel,
-    Clear
+    Clear,
   } = props
 
   const listboxId = `${id}-listbox`
@@ -88,16 +94,20 @@ const Container = React.forwardRef((props, ref) => {
     : defaultStyles[containerClassname]
   const inputClassName = hasFocus ? 'inputFocus' : 'input'
   const inputStyles = styles[inputClassName] || styles.input
-  const queryDefaultStyle = hasTypeahead ? defaultStyles.query : defaultStyles.queryNoTypeahead
+  const queryDefaultStyle = hasTypeahead
+    ? defaultStyles.query
+    : defaultStyles.queryNoTypeahead
 
   // Checks whether or not SWR data is to be treated as immutable
   const isImmutable = (() => {
-    return listboxIsImmutable &&
+    return (
+      listboxIsImmutable &&
       !(
         defaultListbox &&
         !defaultListboxIsImmutable &&
         debouncedQuery.length === 0
       )
+    )
   })()
 
   // Hook to retrieve data using SWR
@@ -116,7 +126,7 @@ const Container = React.forwardRef((props, ref) => {
 
   // Autoselect matching value if we have initial text passed in a prop
   useEffect(() => {
-    if(autoSelect && swrResult.data && swrResult.data[0]?.text === text) {
+    if (autoSelect && swrResult.data && swrResult.data[0]?.text === text) {
       dispatch(setSelected(swrResult.data[0]))
       setAutoSelect(false)
     }
@@ -143,7 +153,7 @@ const Container = React.forwardRef((props, ref) => {
       : undef
     const f = keyPressed.toLowerCase() === 'enter' ? onEnter : onTab
 
-    if(highlightedItem) dispatch(setSelected(highlightedIndex))
+    if (highlightedItem) dispatch(setSelected(highlightedIndex))
     if (typeof f === 'function') f(queryInput.current.value, highlightedItem)
   }
 
@@ -185,29 +195,27 @@ const Container = React.forwardRef((props, ref) => {
     // Immediately clearing both inputs prevents any slight
     // visual timing delays with async dispatch
     queryInput.current.value = ''
-    if(typeahead && typeaheadInput.current)
-      typeaheadInput.current.value = ''
+    if (typeahead && typeaheadInput.current) typeaheadInput.current.value = ''
     dispatch(clear())
     queryInput.current.focus()
   }
 
   const handleFocus = () => {
-    if(!hasFocus) {
+    if (!hasFocus) {
       setHasFocus(true)
       if (state.items && state.items.length > 0) {
         dispatch(setHighlighted(0))
       }
-      if(typeof onFocus === 'function') onFocus()
+      if (typeof onFocus === 'function') onFocus()
     }
   }
 
   const handleBlur = () => {
-    if(blockBlurHandler) {
+    if (blockBlurHandler) {
       queryInput.current.focus()
-    }
-    else {
+    } else {
       setHasFocus(false)
-      if(typeof onBlur === 'function') onBlur()
+      if (typeof onBlur === 'function') onBlur()
     }
     setBlockBlurHandler(false)
   }
@@ -227,12 +235,12 @@ const Container = React.forwardRef((props, ref) => {
       clearState()
     },
     query: (query) => {
-      if(typeof query === 'string') {
+      if (typeof query === 'string') {
         queryInput.current.value = query
         queryInput.current.focus()
         handleInput()
       }
-    }
+    },
   }))
 
   return (
@@ -240,23 +248,24 @@ const Container = React.forwardRef((props, ref) => {
       <div
         className={containerStyles}
         style={defaultContainerStyles}
-        role='combobox'
+        role="combobox"
         aria-expanded={isExpanded}
-        aria-owns={listboxId}
-        aria-haspopup='listbox'>
+        aria-owns={[listboxId, errorboxId].join(' ')}
+        aria-haspopup="listbox"
+      >
         <input
-          id={id}
+          id={listboxId}
           name={name}
           className={`${inputStyles || ''} ${styles.query || ''}`.trim()}
           style={queryDefaultStyle}
           disabled={disabled}
           placeholder={placeholder}
-          type='text'
+          type="text"
           autoFocus={autoFocus}
-          autoComplete='off'
-          autoCorrect='off'
-          autoCapitalize='off'
-          spellCheck='false'
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck="false"
           tabIndex={tabIndex}
           enterKeyHint={enterKeyHint}
           ref={queryInput}
@@ -264,8 +273,8 @@ const Container = React.forwardRef((props, ref) => {
           onInput={handleInput}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          aria-autocomplete='both'
-          aria-controls={listboxId}
+          aria-autocomplete="both"
+          aria-controls={[listboxId, errorboxId].join(' ')}
         />
 
         {hasTypeahead && (
@@ -273,14 +282,14 @@ const Container = React.forwardRef((props, ref) => {
             className={`${inputStyles || ''} ${styles.typeahead || ''}`.trim()}
             style={defaultStyles.typeahead}
             disabled={disabled}
-            type='text'
-            autoComplete='off'
-            autoCorrect='off'
-            autoCapitalize='off'
-            spellCheck='false'
-            tabIndex='-1'
-            readOnly='readonly'
-            aria-hidden='true'
+            type="text"
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck="false"
+            tabIndex="-1"
+            readOnly="readonly"
+            aria-hidden="true"
             ref={typeaheadInput}
           />
         )}
@@ -291,7 +300,8 @@ const Container = React.forwardRef((props, ref) => {
             style={defaultStyles.clearButton}
             onMouseDown={handleClearButton}
             tabIndex={-1}
-            aria-label={clearButtonAriaLabel}>
+            aria-label={clearButtonAriaLabel}
+          >
             <Clear />
           </button>
         )}
@@ -302,7 +312,8 @@ const Container = React.forwardRef((props, ref) => {
             style={defaultStyles.cancelButton}
             onMouseDown={handleCancelButton}
             tabIndex={-1}
-            aria-label={cancelButtonAriaLabel}>
+            aria-label={cancelButtonAriaLabel}
+          >
             <Cancel />
           </button>
         )}
@@ -317,7 +328,11 @@ const Container = React.forwardRef((props, ref) => {
         )}
 
         {isErrorExpanded && (
-          <Errorbox id={errorboxId} errorMessage={errorMessage} styles={styles} />
+          <Errorbox
+            id={errorboxId}
+            errorMessage={errorMessage}
+            styles={styles}
+          />
         )}
       </div>
     </React.Fragment>

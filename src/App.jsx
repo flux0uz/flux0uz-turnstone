@@ -5,33 +5,34 @@ import { fruits, vegetables } from './data'
 const styles = {
   highlightedItem: 'highlightedItem',
   input: 'input',
-  inputFocus: 'inputFocus'
+  inputFocus: 'inputFocus',
 }
 
 const listbox1 = {
   data: fruits,
-  searchType: 'startswith'
+  searchType: 'startswith',
 }
 
 const listbox2 = [
   {
     data: fruits,
     searchType: 'startswith',
-    name: 'Fruits'
+    name: 'Fruits',
   },
   {
     data: vegetables,
     searchType: 'contains',
-    name: 'Vegetables'
-  }
+    name: 'Vegetables',
+  },
 ]
 
 const App = () => {
   return (
     <>
-     <div style={{display:'inline-block'}}>
+      <div style={{ display: 'inline-block' }}>
         <label htmlFor="autocomplete">Search Fruits:</label>&nbsp;
         <Turnstone
+          id="search-fruits"
           clearButton={true}
           debounceWait={0}
           errorMessage={'Houston we have a problem'}
@@ -45,9 +46,10 @@ const App = () => {
         />
       </div>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      <div style={{display:'inline-block'}}>
+      <div style={{ display: 'inline-block' }}>
         <label htmlFor="autocomplete">Search Fruits &amp; Veg:</label>&nbsp;
         <Turnstone
+          id="search-fruits-veg"
           clearButton={true}
           debounceWait={0}
           errorMessage={'Something is broken'}
